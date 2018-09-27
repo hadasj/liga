@@ -124,11 +124,12 @@ public class Commander {
         }
         try {
             LocalDate zacatek = LocalDate.parse(parts[1], FORMAT);
-            LocalDate konec = LocalDate.parse(parts[2], FORMAT);;
+            LocalDate konec = LocalDate.parse(parts[2], FORMAT);
             GenerateService generateService = new GenerateService(DERBY_DB, DERBY_USER, DERBY_PASSWORD);
             generateService.generate(zacatek, konec);
         }catch (Exception e) {
             out.println("Chyba generovani " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace(out);
         }
     }
 }

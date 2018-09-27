@@ -31,8 +31,14 @@ public class ZapasDao {
         statement.setLong(3, zapas.getHrac1());
         statement.setLong(4, zapas.getHrac2());
         statement.setString(5, zapas.getScore());
-        statement.setInt(6, zapas.getBodyHrac1());
-        statement.setInt(7, zapas.getBodyHrac2());
+        if (zapas.getBodyHrac1() != null)
+            statement.setInt(6, zapas.getBodyHrac1());
+        else
+            statement.setNull(6, Types.INTEGER);
+        if (zapas.getBodyHrac2() != null)
+            statement.setInt(7, zapas.getBodyHrac2());
+        else
+            statement.setNull(7, Types.INTEGER);
         if (zapas.getTime() != null)
             statement.setTimestamp(8, Timestamp.valueOf(zapas.getTime()));
         else
