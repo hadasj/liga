@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ZapasDao {
     private static final String INSERT_ZAPAS =
-            "insert into hrac(id, kolo, hrac1, hrac2, skore, body_hrac1, body_hrac2, ts) values(?,?,?,?,?,?,?,?)";
+            "insert into zapas(id, kolo, hrac1, hrac2, skore, body_hrac1, body_hrac2, ts) values(?,?,?,?,?,?,?,?)";
     private static final String LIST_ZAPAS =
             "select z.id, z.kolo, z.hrac1, h1.name, z.hrac2, h2.name, z.skore, z.body_hrac1, z.body_hrac2, z.ts " +
                     "from zapas z " +
