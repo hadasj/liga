@@ -4,14 +4,18 @@ import cz.i.ping.pong.liga.entity.Hrac;
 import cz.i.ping.pong.liga.dao.HracDao;
 
 import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ImportService {
 
+    private Connection connection;
     private HracDao hracDao;
 
     public ImportService(String db, String user, String password) throws SQLException {
-        hracDao = new HracDao(db, user, password);
+        connection = DriverManager.getConnection("jdbc:derby:" + db, user, password);
+        hracDao = new HracDao(connection);
     }
 
     public void importFile(File file) throws IOException, SQLException {
@@ -24,7 +28,7 @@ public class ImportService {
             }
         }
         hracDao.commit();
-        hracDao.close();
+        connection.close();
     }
 
     private void importLine(String[] line) throws SQLException {
