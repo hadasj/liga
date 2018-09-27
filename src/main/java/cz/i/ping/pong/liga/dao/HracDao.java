@@ -12,8 +12,8 @@ public class HracDao {
 
     private final Connection connection;
 
-    public HracDao(String db, String user, String password) throws SQLException {
-        connection = DriverManager.getConnection("jdbc:derby:" + db, user, password);
+    public HracDao(Connection connection) {
+        this.connection = connection;
     }
 
     public void insert(Hrac hrac) throws SQLException {
@@ -42,9 +42,5 @@ public class HracDao {
 
     public void commit() throws SQLException {
         connection.commit();
-    }
-
-    public void close() throws SQLException {
-        connection.close();
     }
 }
