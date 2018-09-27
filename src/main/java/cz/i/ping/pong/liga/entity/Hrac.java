@@ -1,6 +1,6 @@
 package cz.i.ping.pong.liga.entity;
 
-public class Uzivatel {
+public class Hrac {
     private long id;
     private String name;
     private String email;

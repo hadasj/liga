@@ -1,17 +1,17 @@
 package cz.i.ping.pong.liga.service;
 
-import cz.i.ping.pong.liga.entity.Uzivatel;
-import cz.i.ping.pong.liga.dao.UzivatelDao;
+import cz.i.ping.pong.liga.entity.Hrac;
+import cz.i.ping.pong.liga.dao.HracDao;
 
 import java.io.*;
 import java.sql.SQLException;
 
 public class ImportService {
 
-    private UzivatelDao uzivatelDao;
+    private HracDao hracDao;
 
     public void importFile(File file, String db, String user, String password) throws IOException, SQLException {
-        uzivatelDao = new UzivatelDao(db, user, password);
+        hracDao = new HracDao(db, user, password);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = reader.readLine();
@@ -21,15 +21,15 @@ public class ImportService {
                 line = reader.readLine();
             }
         }
-        uzivatelDao.commit();
+        hracDao.commit();
     }
 
     private void importLine(String[] line) throws SQLException {
-        Uzivatel uzivatel = new Uzivatel();
-        uzivatel.setId(Long.parseLong(line[0].replace(".", "")));
-        uzivatel.setName(line[1] + " " + line[2]);
-        uzivatel.setEmail(line[3].replace("(","").replace(")",""));
+        Hrac hrac = new Hrac();
+        hrac.setId(Long.parseLong(line[0].replace(".", "")));
+        hrac.setName(line[1] + " " + line[2]);
+        hrac.setEmail(line[3].replace("(","").replace(")",""));
 
-        uzivatelDao.insert(uzivatel);
+        hracDao.insert(hrac);
     }
 }
