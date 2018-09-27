@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KoloDao {
-    private static final String INSERT_KOLO = "insert into hrac(id, od, do) values(?,?,?)";
+    private static final String INSERT_KOLO = "insert into kolo(id, od, do) values(?,?,?)";
     private static final String LIST_KOLO = "select id, od, do from kolo order by id";
 
     private final Connection connection;
