@@ -39,8 +39,4 @@ public class KoloDao {
         resultSet.close();
         return result;
     }
-
-    public void commit() throws SQLException {
-        connection.commit();
-    }
 }

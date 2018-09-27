@@ -1,16 +1,20 @@
 package cz.i.ping.pong.liga;
 
+import cz.i.ping.pong.liga.service.GenerateService;
 import cz.i.ping.pong.liga.service.ImportService;
 import cz.i.ping.pong.liga.service.PrintService;
 
 import java.io.Console;
 import java.io.File;
 import java.io.PrintStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Commander {
     private static final String DERBY_DB = "/home/honza/Documents/pp-liga";
     private static final String DERBY_USER = "hadasj";
     private static final String DERBY_PASSWORD = "liga123";
+    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     private enum Command {
         HELP('h'), IMPORT('i'), GENERATE('g'), PRINT('p'), EXPORT('e'), QUIT('q'), UNKNOWN(null);
@@ -51,14 +55,17 @@ public class Commander {
                     case IMPORT:
                         importFile(line, out);
                         break;
-                    case UNKNOWN:
-                        out.println("Neznámý příkaz: " + line);
-                        break;
                     case PRINT:
                         print(out);
                         break;
                     case GENERATE:
+                        generate(line, out);
+                        break;
+                    case EXPORT:
                         // TODO
+                        throw new IllegalArgumentException("unimplemented");
+                    case UNKNOWN:
+                        out.println("Neznámý příkaz: " + line);
                         break;
                 }
             }
@@ -71,7 +78,7 @@ public class Commander {
         out.println("Příkazy: ");
         out.println("h = help");
         out.println("i = import file");
-        out.println("g = generate");
+        out.println("g = generate zacatek konec");
         out.println("p = print");
         out.println("e = export to file");
         out.println("q = quit");
@@ -106,6 +113,22 @@ public class Commander {
             printService.print(out);
         }catch (Exception e) {
             out.println("Chyba tisku " + e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    private static void generate(String line, PrintStream out) {
+        String parts[] = line.split(" ");
+        if (parts.length < 3) {
+            out.println("Chybí začátek konec");
+            return;
+        }
+        try {
+            LocalDate zacatek = LocalDate.parse(parts[1], FORMAT);
+            LocalDate konec = LocalDate.parse(parts[2], FORMAT);;
+            GenerateService generateService = new GenerateService(DERBY_DB, DERBY_USER, DERBY_PASSWORD);
+            generateService.generate(zacatek, konec);
+        }catch (Exception e) {
+            out.println("Chyba generovani " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 }

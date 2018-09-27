@@ -16,6 +16,7 @@ public class ZapasDao {
                     "inner join hrac h2 on z.hrac2 = h2.id " +
                     "where kolo = ? " +
                     "order by kolo z.desc, z.hrac1";
+    private static final String GET_MAX_ID = "select max(id) from zapas";
 
     private final Connection connection;
 
@@ -64,7 +65,14 @@ public class ZapasDao {
         return result;
     }
 
-    public void commit() throws SQLException {
-        connection.commit();
+    public long getMaxId() throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(GET_MAX_ID);
+        ResultSet resultSet = statement.executeQuery();
+        Long maxId = null;
+        if (resultSet.next())
+            maxId =  resultSet.getLong(1);
+        if (maxId == null)
+            maxId = 0L;
+        return maxId;
     }
 }
