@@ -1,4 +1,4 @@
-package cz.icz.ping.pong.liga.entity;
+package cz.i.ping.pong.liga.entity;
 
 public class Uzivatel {
     private long id;

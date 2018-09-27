@@ -1,6 +1,6 @@
-package cz.icz.ping.pong.liga.dao;
+package cz.i.ping.pong.liga.dao;
 
-import cz.icz.ping.pong.liga.entity.Uzivatel;
+import cz.i.ping.pong.liga.entity.Uzivatel;
 
 import java.sql.*;
 

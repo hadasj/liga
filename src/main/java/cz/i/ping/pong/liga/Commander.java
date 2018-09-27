@@ -1,6 +1,6 @@
-package cz.icz.ping.pong.liga;
+package cz.i.ping.pong.liga;
 
-import cz.icz.ping.pong.liga.service.ImportService;
+import cz.i.ping.pong.liga.service.ImportService;
 
 import java.io.Console;
 import java.io.File;

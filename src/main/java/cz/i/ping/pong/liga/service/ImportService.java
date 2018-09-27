@@ -1,7 +1,7 @@
-package cz.icz.ping.pong.liga.service;
+package cz.i.ping.pong.liga.service;
 
-import cz.icz.ping.pong.liga.dao.UzivatelDao;
-import cz.icz.ping.pong.liga.entity.Uzivatel;
+import cz.i.ping.pong.liga.entity.Uzivatel;
+import cz.i.ping.pong.liga.dao.UzivatelDao;
 
 import java.io.*;
 import java.sql.SQLException;
