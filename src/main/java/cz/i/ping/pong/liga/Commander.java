@@ -93,6 +93,7 @@ public class Commander {
         ImportService importService = new ImportService();
         try {
             importService.importFile(file, DERBY_DB, DERBY_USER, DERBY_PASSWORD);
+            out.println("Import souboru " + filename + " proběhl úspěšně.");
         } catch (Exception e) {
             out.println("Chyba importu " + e.getClass().getName() + ": " + e.getMessage());
         }
