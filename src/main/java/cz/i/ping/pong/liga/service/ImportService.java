@@ -28,7 +28,7 @@ public class ImportService {
         Uzivatel uzivatel = new Uzivatel();
         uzivatel.setId(Long.parseLong(line[0].replace(".", "")));
         uzivatel.setName(line[1] + " " + line[2]);
-        uzivatel.setEmail(line[4].replace("(","").replace(")",""));
+        uzivatel.setEmail(line[3].replace("(","").replace(")",""));
 
         uzivatelDao.insert(uzivatel);
     }
