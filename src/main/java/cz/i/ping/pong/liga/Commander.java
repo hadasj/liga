@@ -1,6 +1,7 @@
 package cz.i.ping.pong.liga;
 
 import cz.i.ping.pong.liga.service.ImportService;
+import cz.i.ping.pong.liga.service.PrintService;
 
 import java.io.Console;
 import java.io.File;
@@ -54,7 +55,7 @@ public class Commander {
                         out.println("Neznámý příkaz: " + line);
                         break;
                     case PRINT:
-                        // TODO
+                        print(out);
                         break;
                     case GENERATE:
                         // TODO
@@ -90,12 +91,21 @@ public class Commander {
         }
 
         out.println("Importuji soubor " + filename);
-        ImportService importService = new ImportService();
         try {
-            importService.importFile(file, DERBY_DB, DERBY_USER, DERBY_PASSWORD);
+            ImportService importService = new ImportService(DERBY_DB, DERBY_USER, DERBY_PASSWORD);
+            importService.importFile(file);
             out.println("Import souboru " + filename + " proběhl úspěšně.");
         } catch (Exception e) {
             out.println("Chyba importu " + e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    private static void print(PrintStream out) {
+        try {
+            PrintService printService = new PrintService(DERBY_DB, DERBY_USER, DERBY_PASSWORD);
+            printService.print(out);
+        }catch (Exception e) {
+            out.println("Chyba tisku " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 }

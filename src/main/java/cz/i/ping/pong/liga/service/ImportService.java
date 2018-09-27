@@ -10,9 +10,11 @@ public class ImportService {
 
     private HracDao hracDao;
 
-    public void importFile(File file, String db, String user, String password) throws IOException, SQLException {
+    public ImportService(String db, String user, String password) throws SQLException {
         hracDao = new HracDao(db, user, password);
+    }
 
+    public void importFile(File file) throws IOException, SQLException {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = reader.readLine();
             while (line != null) {
@@ -22,6 +24,7 @@ public class ImportService {
             }
         }
         hracDao.commit();
+        hracDao.close();
     }
 
     private void importLine(String[] line) throws SQLException {

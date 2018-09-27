@@ -9,7 +9,7 @@ import java.util.List;
 
 public class PrintService {
 
-    HracDao hracDao;
+    private HracDao hracDao;
 
     public PrintService(String db, String user, String password) throws SQLException {
         hracDao = new HracDao(db, user, password);
@@ -17,6 +17,7 @@ public class PrintService {
 
     public void print(PrintStream out) throws SQLException {
         List<Hrac> hraci = hracDao.list();
+        hracDao.close();
 
         out.println();
         out.println("Hraci:");

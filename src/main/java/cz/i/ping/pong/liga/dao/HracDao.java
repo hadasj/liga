@@ -16,12 +16,13 @@ public class HracDao {
         connection = DriverManager.getConnection("jdbc:derby:" + db, user, password);
     }
 
-    public int insert(Hrac hrac) throws SQLException {
+    public void insert(Hrac hrac) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(INSERT_USER);
         statement.setLong(1, hrac.getId());
         statement.setString(2, hrac.getName());
         statement.setString(3, hrac.getEmail());
-        return statement.executeUpdate();
+        statement.executeUpdate();
+        statement.close();
     }
 
     public List<Hrac> list() throws SQLException {
@@ -35,10 +36,15 @@ public class HracDao {
             hrac.setEmail(resultSet.getString(3));
             result.add(hrac);
         }
+        resultSet.close();
         return result;
     }
 
     public void commit() throws SQLException {
         connection.commit();
+    }
+
+    public void close() throws SQLException {
+        connection.close();
     }
 }
