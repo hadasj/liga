@@ -104,6 +104,7 @@ public class Commander {
             out.println("Import souboru " + filename + " proběhl úspěšně.");
         } catch (Exception e) {
             out.println("Chyba importu " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace(out);
         }
     }
 
@@ -113,6 +114,7 @@ public class Commander {
             printService.print(out);
         }catch (Exception e) {
             out.println("Chyba tisku " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace(out);
         }
     }
 
@@ -127,6 +129,7 @@ public class Commander {
             LocalDate konec = LocalDate.parse(parts[2], FORMAT);
             GenerateService generateService = new GenerateService(DERBY_DB, DERBY_USER, DERBY_PASSWORD);
             generateService.generate(zacatek, konec);
+            out.println("Generování soupeřů pro kolo " + zacatek + " - " + konec + " proběhl úspěšně.");
         }catch (Exception e) {
             out.println("Chyba generovani " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace(out);

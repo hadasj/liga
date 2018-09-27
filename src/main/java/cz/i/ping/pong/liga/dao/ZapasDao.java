@@ -14,8 +14,8 @@ public class ZapasDao {
                     "from zapas z " +
                     "inner join hrac h1 on z.hrac1 = h1.id " +
                     "inner join hrac h2 on z.hrac2 = h2.id " +
-                    "where kolo = ? " +
-                    "order by kolo z.desc, z.hrac1";
+                    "where z.kolo = ? " +
+                    "order by z.kolo desc, z.hrac1";
     private static final String GET_MAX_ID = "select max(id) from zapas";
 
     private final Connection connection;
