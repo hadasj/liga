@@ -7,6 +7,9 @@ import java.io.File;
 import java.io.PrintStream;
 
 public class Commander {
+    private static final String DERBY_DB = "/home/honza/Documents/pp-liga";
+    private static final String DERBY_USER = "hadasj";
+    private static final String DERBY_PASSWORD = "liga123";
 
     private enum Command {
         HELP('h'), IMPORT('i'), GENERATE('g'), PRINT('p'), EXPORT('e'), QUIT('q'), UNKNOWN(null);
@@ -88,6 +91,10 @@ public class Commander {
 
         out.println("Importuji soubor " + filename);
         ImportService importService = new ImportService();
-        importService.importFile(file);
+        try {
+            importService.importFile(file, DERBY_DB, DERBY_USER, DERBY_PASSWORD);
+        } catch (Exception e) {
+            out.println("Chyba importu " + e.getClass().getName() + ": " + e.getMessage());
+        }
     }
 }
