@@ -20,7 +20,7 @@ public class PrintService {
         hracDao.close();
 
         out.println();
-        out.println("Hraci:");
+        out.println("Hráči:");
         for (Hrac hrac : hraci)
             out.println(hrac.getId() + ", " + hrac.getName() + ", " + hrac.getEmail());
     }
