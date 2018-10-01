@@ -1,5 +1,6 @@
 package cz.i.ping.pong.liga;
 
+import cz.i.ping.pong.liga.service.ExportService;
 import cz.i.ping.pong.liga.service.GenerateService;
 import cz.i.ping.pong.liga.service.ImportService;
 import cz.i.ping.pong.liga.service.PrintService;
@@ -62,8 +63,8 @@ public class Commander {
                         generate(line, out);
                         break;
                     case EXPORT:
-                        // TODO
-                        throw new IllegalArgumentException("unimplemented");
+                        export(line, out);
+                        break;
                     case UNKNOWN:
                         out.println("Neznámý příkaz: " + line);
                         break;
@@ -132,6 +133,26 @@ public class Commander {
             out.println("Generování soupeřů pro kolo " + zacatek + " - " + konec + " proběhl úspěšně.");
         }catch (Exception e) {
             out.println("Chyba generovani " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace(out);
+        }
+    }
+
+    private static void export(String line, PrintStream out) {
+        try {
+            ExportService exportService = new ExportService(DERBY_DB, DERBY_USER, DERBY_PASSWORD);
+
+            String parts[] = line.split(" ");
+            long kolo;
+            if (parts.length >= 2)
+                kolo = Long.parseLong(parts[1]);
+            else
+                kolo = exportService.getLastKolo();
+
+            out.println("Exportuji kolo: " + kolo);
+            exportService.exportKolo(kolo);
+            out.println("Export proběhl úspěšně");
+        } catch (Exception e) {
+            out.println("Chyba exportu " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace(out);
         }
     }
