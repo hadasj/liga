@@ -37,7 +37,6 @@ public class GenerateService {
 
         List<Long> hraciList = hracDao.list().stream().map(Hrac::getId).collect(Collectors.toList());
         Map<Long, Set<Long>> hraciMap = new HashMap<>();
-        Map<Long, Long> zapasy = new HashMap<>();
         Set<Long> vylosovani = new HashSet<>();
 
         for (Long hrac : hraciList) {
@@ -52,7 +51,7 @@ public class GenerateService {
 
         for (Map.Entry<Long, Set<Long>> entry : hraciMap.entrySet()) {
             Long hrac = entry.getKey();
-            if (zapasy.get(hrac) == null) {
+            if (!vylosovani.contains(hrac)) {
                 // hrac jeste nema urceneho soupere
                 Set<Long> souperi = entry.getValue();
                 // odeber hrace kteri jsou uz toto kolo vylosovani
@@ -65,8 +64,6 @@ public class GenerateService {
 
                 // zapis dvojici do zapasu
                 vylosovani.addAll(asList(hrac, souper));
-                zapasy.put(hrac, souper);
-                zapasy.put(souper, hrac);
 
                 // perzistuj zapasy
                 Zapas zapas = new Zapas();
@@ -74,13 +71,6 @@ public class GenerateService {
                 zapas.setKolo(kolo);
                 zapas.setHrac1(hrac);
                 zapas.setHrac2(souper);
-                zapasDao.insert(zapas);
-
-                zapas = new Zapas();
-                zapas.setId(idZapasu++);
-                zapas.setKolo(kolo);
-                zapas.setHrac1(souper);
-                zapas.setHrac2(hrac);
                 zapasDao.insert(zapas);
             }
         }

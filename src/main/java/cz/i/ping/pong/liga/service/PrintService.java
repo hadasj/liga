@@ -41,8 +41,9 @@ public class PrintService {
         for (Kolo kolo : kola) {
             List<Zapas> zapasy = zapasDao.list(kolo.getId());
 
+            int row = 1;
             for (Zapas zapas : zapasy) {
-                out.print(zapas.getHrac1Jmeno() + " : " + zapas.getHrac2Jmeno());
+                out.print(row++ + ". " + zapas.getHrac1Jmeno() + " : " + zapas.getHrac2Jmeno());
                 if (zapas.getScore() != null && !zapas.getScore().trim().isEmpty())
                     out.print(", " + zapas.getScore() + ", " + zapas.getTime());
                 out.println();
