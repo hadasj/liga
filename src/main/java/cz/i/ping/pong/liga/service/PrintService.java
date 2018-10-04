@@ -12,9 +12,11 @@ import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class PrintService {
+    private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     private Connection connection;
     private HracDao hracDao;
@@ -48,9 +50,12 @@ public class PrintService {
             for (Zapas zapas : zapasy) {
                 out.print("  " + row++ + ". " + zapas.getHrac1Jmeno() + " : " + zapas.getHrac2Jmeno());
                 if (zapas.getScore() != null && !zapas.getScore().trim().isEmpty())
-                    out.print(", " + zapas.getScore() + ", " + zapas.getTime());
+                    out.print(", " + zapas.getScore());
+                if (zapas.getTime() != null)
+                    out.print(", " + zapas.getTime().format(TIMESTAMP_FORMAT));
                 out.println();
             }
+            out.println();
         }
         connection.close();
     }
