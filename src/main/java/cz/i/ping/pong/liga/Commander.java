@@ -12,10 +12,15 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class Commander {
-    private static final String DERBY_DB = "/home/honza/Documents/pp-liga";
-    private static final String DERBY_USER = "hadasj";
-    private static final String DERBY_PASSWORD = "liga123";
+    private static final String DEFAULT_DERBY_DB = "/home/honza/Documents/pp-liga";
+    private static final String DEFAULT_DERBY_USER = "hadasj";
+    private static final String DEFAULT_DERBY_PASSWORD = "liga123";
     private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+    public static void main(String[] args) {
+        Commander commander = new Commander(args);
+        commander.process();
+    }
 
     private enum Command {
         HELP('h'), IMPORT('i'), GENERATE('g'), PRINT('p'), EXPORT('e'), QUIT('q'), UNKNOWN(null);
@@ -33,8 +38,30 @@ public class Commander {
         }
     }
 
+    private String db;
+    private String user;
+    private String password;
 
-    public static void main(String[] args) {
+    private Commander(String[] arguments) {
+        db = DEFAULT_DERBY_DB;
+        user = DEFAULT_DERBY_USER;
+        password = DEFAULT_DERBY_PASSWORD;
+
+        if (arguments.length >= 1) {
+            db = arguments[0];
+        }
+        if (arguments.length >= 3) {
+            user = arguments[1];
+            password = arguments[2];
+        }
+        File derbyDbDirectory = new File(db);
+        // check db path
+        if (!derbyDbDirectory.exists() || !derbyDbDirectory.isDirectory() || !derbyDbDirectory.canWrite())
+            throw new IllegalStateException("Db " + db + " neni pristupna! " + derbyDbDirectory.exists()  + ", " +
+                    derbyDbDirectory.isDirectory() + ", " + derbyDbDirectory.canWrite());
+    }
+
+    private void process() {
         PrintStream out = System.out;
         Console console = System.console();
 
@@ -73,7 +100,7 @@ public class Commander {
         } while (run);
     }
 
-    private static void printCommands(PrintStream out) {
+    private void printCommands(PrintStream out) {
         out.println();
         out.println("Ping pong liga");
         out.println("Příkazy: ");
@@ -85,7 +112,7 @@ public class Commander {
         out.println("q = quit");
     }
 
-    private static void importFile(String line, PrintStream out) {
+    private void importFile(String line, PrintStream out) {
         String parts[] = line.split(" ");
         if (parts.length < 2) {
             out.println("Chybí název souboru");
@@ -100,7 +127,7 @@ public class Commander {
 
         out.println("Importuji soubor " + filename);
         try {
-            ImportService importService = new ImportService(DERBY_DB, DERBY_USER, DERBY_PASSWORD);
+            ImportService importService = new ImportService(db, user, password);
             importService.importFile(file);
             out.println("Import souboru " + filename + " proběhl úspěšně.");
         } catch (Exception e) {
@@ -109,9 +136,9 @@ public class Commander {
         }
     }
 
-    private static void print(PrintStream out) {
+    private void print(PrintStream out) {
         try {
-            PrintService printService = new PrintService(DERBY_DB, DERBY_USER, DERBY_PASSWORD);
+            PrintService printService = new PrintService(db, user, password);
             printService.print(out);
         }catch (Exception e) {
             out.println("Chyba tisku " + e.getClass().getName() + ": " + e.getMessage());
@@ -119,7 +146,7 @@ public class Commander {
         }
     }
 
-    private static void generate(String line, PrintStream out) {
+    private void generate(String line, PrintStream out) {
         String parts[] = line.split(" ");
         if (parts.length < 3) {
             out.println("Chybí začátek konec");
@@ -128,7 +155,7 @@ public class Commander {
         try {
             LocalDate zacatek = LocalDate.parse(parts[1], FORMAT);
             LocalDate konec = LocalDate.parse(parts[2], FORMAT);
-            GenerateService generateService = new GenerateService(DERBY_DB, DERBY_USER, DERBY_PASSWORD);
+            GenerateService generateService = new GenerateService(db, user, password);
             generateService.generate(zacatek, konec);
             out.println("Generování soupeřů pro kolo " + zacatek + " - " + konec + " proběhl úspěšně.");
         }catch (Exception e) {
@@ -137,9 +164,9 @@ public class Commander {
         }
     }
 
-    private static void export(String line, PrintStream out) {
+    private void export(String line, PrintStream out) {
         try {
-            ExportService exportService = new ExportService(DERBY_DB, DERBY_USER, DERBY_PASSWORD);
+            ExportService exportService = new ExportService(db, user, password);
 
             String parts[] = line.split(" ");
             long kolo;
