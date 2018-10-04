@@ -1,5 +1,6 @@
 package cz.i.ping.pong.liga.service;
 
+import cz.i.ping.pong.liga.Commander;
 import cz.i.ping.pong.liga.dao.HracDao;
 import cz.i.ping.pong.liga.dao.KoloDao;
 import cz.i.ping.pong.liga.dao.ZapasDao;
@@ -37,13 +38,15 @@ public class PrintService {
 
         List<Kolo> kola = koloDao.list();
         out.println();
-        out.println("Zápasy:");
+        out.println("Zápasy");
         for (Kolo kolo : kola) {
+            out.println(kolo.getId() + ". kolo (" + kolo.getStart().format(Commander.FORMAT)
+                    + "-" + kolo.getKonec().format(Commander.FORMAT) + "):");
             List<Zapas> zapasy = zapasDao.list(kolo.getId());
 
             int row = 1;
             for (Zapas zapas : zapasy) {
-                out.print(row++ + ". " + zapas.getHrac1Jmeno() + " : " + zapas.getHrac2Jmeno());
+                out.print("  " + row++ + ". " + zapas.getHrac1Jmeno() + " : " + zapas.getHrac2Jmeno());
                 if (zapas.getScore() != null && !zapas.getScore().trim().isEmpty())
                     out.print(", " + zapas.getScore() + ", " + zapas.getTime());
                 out.println();
