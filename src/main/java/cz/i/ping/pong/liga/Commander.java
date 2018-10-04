@@ -38,6 +38,20 @@ public class Commander {
         }
     }
 
+    public enum Import {
+        HRACI("ih"), ZAPASY("iz");
+        private String code;
+        Import(String code) {
+            this.code = code;
+        }
+        public static Import codeOf(String code) {
+            for (Import imp : values())
+                if (imp.code.equalsIgnoreCase(code))
+                    return imp;
+            throw new IllegalArgumentException("Neznamy prikaz: " + code);
+        }
+    }
+
     private String db;
     private String user;
     private String password;
@@ -105,7 +119,8 @@ public class Commander {
         out.println("Ping pong liga");
         out.println("Příkazy: ");
         out.println("h = help");
-        out.println("i = import file");
+        out.println("ih = import hracu");
+        out.println("iz = import zapasu");
         out.println("g = generate zacatek konec");
         out.println("p = print");
         out.println("e = export to file");
@@ -118,6 +133,7 @@ public class Commander {
             out.println("Chybí název souboru");
             return;
         }
+        Import command = Import.codeOf(parts[0]);
         String filename = parts[1];
         File file = new File(filename);
         if (!file.exists() || !file.canRead()) {
@@ -128,7 +144,7 @@ public class Commander {
         out.println("Importuji soubor " + filename);
         try {
             ImportService importService = new ImportService(db, user, password);
-            importService.importFile(file);
+            importService.importFile(command, file);
             out.println("Import souboru " + filename + " proběhl úspěšně.");
         } catch (Exception e) {
             out.println("Chyba importu " + e.getClass().getName() + ": " + e.getMessage());

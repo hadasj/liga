@@ -9,6 +9,8 @@ import java.util.List;
 public class ZapasDao {
     private static final String INSERT_ZAPAS =
             "insert into zapas(id, kolo, hrac1, hrac2, skore, body_hrac1, body_hrac2, ts) values(?,?,?,?,?,?,?,?)";
+    private static final String UPDATE_ZAPAS =
+            "update zapas set skore = ?, body_hrac1 = ?, body_hrac2 = ?, ts = ? where id = ?";
     private static final String LIST_ZAPAS =
             "select z.id, z.kolo, z.hrac1, h1.name, z.hrac2, h2.name, z.skore, z.body_hrac1, z.body_hrac2, z.ts " +
                     "from zapas z " +
@@ -45,6 +47,25 @@ public class ZapasDao {
             statement.setNull(8, Types.TIMESTAMP);
         statement.executeUpdate();
         statement.close();
+    }
+
+    public void update(Zapas zapas) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(UPDATE_ZAPAS);
+
+        statement.setString(1, zapas.getScore());
+        if (zapas.getBodyHrac1() != null)
+            statement.setInt(2, zapas.getBodyHrac1());
+        else
+            statement.setNull(2, Types.INTEGER);
+        if (zapas.getBodyHrac2() != null)
+            statement.setInt(3, zapas.getBodyHrac2());
+        else
+            statement.setNull(3, Types.INTEGER);
+        if (zapas.getTime() != null)
+            statement.setTimestamp(4, Timestamp.valueOf(zapas.getTime()));
+        else
+            statement.setNull(4, Types.TIMESTAMP);
+        statement.setLong(5, zapas.getId());
     }
 
     public List<Zapas> list(Long kolo) throws SQLException {
