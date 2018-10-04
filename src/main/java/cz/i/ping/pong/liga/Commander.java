@@ -15,7 +15,7 @@ public class Commander {
     private static final String DEFAULT_DERBY_DB = "/home/honza/Documents/pp-liga";
     private static final String DEFAULT_DERBY_USER = "hadasj";
     private static final String DEFAULT_DERBY_PASSWORD = "liga123";
-    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("d.M.yyyy");
 
     public static void main(String[] args) {
         Commander commander = new Commander(args);
