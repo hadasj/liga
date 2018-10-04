@@ -66,6 +66,9 @@ public class ZapasDao {
         else
             statement.setNull(4, Types.TIMESTAMP);
         statement.setLong(5, zapas.getId());
+
+        statement.executeUpdate();
+        statement.close();
     }
 
     public List<Zapas> list(Long kolo) throws SQLException {
@@ -101,5 +104,9 @@ public class ZapasDao {
         if (maxId == null)
             maxId = 0L;
         return maxId;
+    }
+
+    public void commit() throws SQLException {
+        connection.commit();
     }
 }

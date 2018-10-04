@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ImportService {
-    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("");
+    private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("d.M.yy HH:mm");
 
     private Connection connection;
     private HracDao hracDao;
@@ -77,6 +77,7 @@ public class ImportService {
                 line = reader.readLine();
             }
         }
+        zapasDao.commit();
     }
 
     private void importLine(String[] line) throws SQLException {
@@ -85,7 +86,8 @@ public class ImportService {
         zapas.setScore(line[4]);
         zapas.setBodyHrac1(Integer.parseInt(line[5]));
         zapas.setBodyHrac2(Integer.parseInt(line[6]));
-        zapas.setTime(LocalDateTime.parse(line[7], FORMAT));
+        if (line.length > 7)
+            zapas.setTime(LocalDateTime.parse(line[7], TIMESTAMP_FORMAT));
 
         zapasDao.update(zapas);
     }
