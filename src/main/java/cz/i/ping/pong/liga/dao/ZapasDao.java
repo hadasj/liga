@@ -19,6 +19,8 @@ public class ZapasDao {
                     "where z.kolo = ? " +
                     "order by z.kolo desc, z.hrac1";
     private static final String GET_MAX_ID = "select max(id) from zapas";
+    private static final String POCET_BODU_HRAC1 = "select sum(body_hrac1) from zapas where hrac1 = ?";
+    private static final String POCET_BODU_HRAC2 = "select sum(body_hrac2) from zapas where hrac2 = ?";
 
     private final Connection connection;
 
@@ -104,6 +106,26 @@ public class ZapasDao {
         if (maxId == null)
             maxId = 0L;
         return maxId;
+    }
+
+    public int getPocetBoduHrac1(long id) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(POCET_BODU_HRAC1);
+        statement.setLong(1, id);
+        ResultSet resultSet = statement.executeQuery();
+        int body = 0;
+        if (resultSet.next())
+            body = resultSet.getInt(1);
+        return body;
+    }
+
+    public int getPocetBoduHrac2(long id) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(POCET_BODU_HRAC2);
+        statement.setLong(1, id);
+        ResultSet resultSet = statement.executeQuery();
+        int body = 0;
+        if (resultSet.next())
+            body = resultSet.getInt(1);
+        return body;
     }
 
     public void commit() throws SQLException {

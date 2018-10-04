@@ -23,7 +23,7 @@ public class Commander {
     }
 
     private enum Command {
-        HELP('h'), IMPORT('i'), GENERATE('g'), PRINT('p'), EXPORT('e'), QUIT('q'), UNKNOWN(null);
+        HELP('h'), IMPORT('i'), GENERATE('g'), PRINT('p'), EXPORT('e'), QUIT('q'), ZEBRICEK('z'), UNKNOWN(null);
 
         private Character code;
         Command(Character code) {
@@ -106,6 +106,9 @@ public class Commander {
                     case EXPORT:
                         export(line, out);
                         break;
+                    case ZEBRICEK:
+                        zebricek(out);
+                        break;
                     case UNKNOWN:
                         out.println("Neznámý příkaz: " + line);
                         break;
@@ -124,6 +127,7 @@ public class Commander {
         out.println("g = generate zacatek konec");
         out.println("p = print");
         out.println("e = export to file");
+        out.println("z = zebricek");
         out.println("q = quit");
     }
 
@@ -196,6 +200,16 @@ public class Commander {
             out.println("Export proběhl úspěšně");
         } catch (Exception e) {
             out.println("Chyba exportu " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace(out);
+        }
+    }
+
+    private void zebricek(PrintStream out) {
+        try {
+            PrintService printService = new PrintService(db, user, password);
+            printService.poradi(out);
+        }catch (Exception e) {
+            out.println("Chyba tisku zebricku " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace(out);
         }
     }
