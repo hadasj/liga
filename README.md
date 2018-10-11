@@ -10,3 +10,5 @@ Příkazy:
  - print - vytiskne hráče a všechny kola
  - generate datum-start datum-end - generuje nové kolo
  - zebricek - vytiskne hráče setříděné podle přijatých bodů
+ - aktivovat id - aktivuje hráče
+ - deaktivovat id - deaktivuje hráče
