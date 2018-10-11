@@ -1,9 +1,7 @@
 package cz.i.ping.pong.liga;
 
-import cz.i.ping.pong.liga.service.ExportService;
-import cz.i.ping.pong.liga.service.GenerateService;
-import cz.i.ping.pong.liga.service.ImportService;
-import cz.i.ping.pong.liga.service.PrintService;
+import cz.i.ping.pong.liga.entity.Hrac;
+import cz.i.ping.pong.liga.service.*;
 
 import java.io.Console;
 import java.io.File;
@@ -23,7 +21,7 @@ public class Commander {
     }
 
     private enum Command {
-        HELP('h'), IMPORT('i'), GENERATE('g'), PRINT('p'), EXPORT('e'), QUIT('q'), ZEBRICEK('z'), UNKNOWN(null);
+        HELP('h'), AKTIVOVAT('a'), DEAKTIVOVAT('d'), IMPORT('i'), GENERATE('g'), PRINT('p'), EXPORT('e'), QUIT('q'), ZEBRICEK('z'), UNKNOWN(null);
 
         private Character code;
         Command(Character code) {
@@ -88,6 +86,12 @@ public class Commander {
                 char code = line.trim().toLowerCase().charAt(0);
                 Command command = Command.codeOf(code);
                 switch (command) {
+                    case AKTIVOVAT:
+                        enable(line, out);
+                        break;
+                    case DEAKTIVOVAT:
+                        disable(line, out);
+                        break;
                     case HELP:
                         printCommands(out);
                         break;
@@ -121,6 +125,8 @@ public class Commander {
         out.println();
         out.println("Ping pong liga");
         out.println("Příkazy: ");
+        out.println("a = aktivovat hrace");
+        out.println("d = deaktivovat hrace");
         out.println("h = help");
         out.println("ih = import hracu");
         out.println("iz = import zapasu");
@@ -210,6 +216,48 @@ public class Commander {
             printService.poradi(out);
         }catch (Exception e) {
             out.println("Chyba tisku zebricku " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace(out);
+        }
+    }
+
+    private void enable(String line, PrintStream out) {
+        String parts[] = line.split(" ");
+        if (parts.length < 2) {
+            out.println("Chybí ID hráče");
+            return;
+        }
+        try {
+            Long idHrace = Long.parseLong(parts[1]);
+            UpdateService updateService = new UpdateService(db, user, password);
+            Hrac hrac = updateService.getHrac(idHrace);
+            if (hrac != null) {
+                out.println("Aktivuji hráče " + hrac.getName());
+                updateService.enableHrac(idHrace);
+                out.println("Hráč " + hrac.getName() + " je aktivní.");
+            }
+        } catch (Exception e) {
+            out.println("Chyba updatu " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace(out);
+        }
+    }
+
+    private void disable(String line, PrintStream out) {
+        String parts[] = line.split(" ");
+        if (parts.length < 2) {
+            out.println("Chybí ID hráče");
+            return;
+        }
+        try {
+            Long idHrace = Long.parseLong(parts[1]);
+            UpdateService updateService = new UpdateService(db, user, password);
+            Hrac hrac = updateService.getHrac(idHrace);
+            if (hrac != null) {
+                out.println("Deaktivuji hráče " + hrac.getName());
+                updateService.disableHrac(idHrace);
+                out.println("Hráč " + hrac.getName() + " je neaktivní.");
+            }
+        } catch (Exception e) {
+            out.println("Chyba updatu " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace(out);
         }
     }

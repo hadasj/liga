@@ -30,3 +30,5 @@ alter table zapas add constraint ui_zapas_hraci unique (hrac1, hrac2);
 alter table zapas add constraint fk_kolo foreign key (kolo) references kolo(id);
 alter table zapas add constraint fk_hrac1 foreign key (hrac1) references hrac(id);
 alter table zapas add constraint fk_hrac2 foreign key (hrac2) references hrac(id);
+
+alter table hrac add column aktivni boolean default true not null;

@@ -4,6 +4,7 @@ public class Hrac {
     private long id;
     private String name;
     private String email;
+    private boolean aktivni;
 
     public long getId() {
         return id;
@@ -27,5 +28,13 @@ public class Hrac {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean isAktivni() {
+        return aktivni;
+    }
+
+    public void setAktivni(boolean aktivni) {
+        this.aktivni = aktivni;
     }
 }

@@ -35,7 +35,7 @@ public class GenerateService {
         long kolo = createKolo(zacatek, konec);
         long idZapasu = getMaxIdZapasu() + 1;
 
-        List<Long> hraciList = hracDao.list().stream().map(Hrac::getId).collect(Collectors.toList());
+        List<Long> hraciList = hracDao.list().stream().filter(Hrac::isAktivni).map(Hrac::getId).collect(Collectors.toList());
         Map<Long, Set<Long>> hraciMap = new HashMap<>();
         Set<Long> vylosovani = new HashSet<>();
 

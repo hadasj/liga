@@ -37,7 +37,8 @@ public class PrintService {
         out.println();
         out.println("Hráči:");
         for (Hrac hrac : hraci)
-            out.println(hrac.getId() + ", " + hrac.getName() + ", " + hrac.getEmail());
+            out.println(hrac.getId() + ", " + hrac.getName() + ", " + hrac.getEmail() +
+                    (hrac.isAktivni() ? "" : ", neaktivní"));
 
         List<Kolo> kola = koloDao.list();
         out.println();
