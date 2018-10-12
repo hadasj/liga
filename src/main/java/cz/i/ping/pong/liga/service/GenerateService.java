@@ -7,6 +7,7 @@ import cz.i.ping.pong.liga.entity.Hrac;
 import cz.i.ping.pong.liga.entity.Kolo;
 import cz.i.ping.pong.liga.entity.Zapas;
 
+import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -32,12 +33,13 @@ public class GenerateService {
     }
 
     public void generate(LocalDate zacatek, LocalDate konec) throws SQLException {
-        long kolo = createKolo(zacatek, konec);
+        Kolo kolo = createKolo(zacatek, konec);
         long idZapasu = getMaxIdZapasu() + 1;
 
         List<Long> hraciList = hracDao.list().stream().filter(Hrac::isAktivni).map(Hrac::getId).collect(Collectors.toList());
         Map<Long, Set<Long>> hraciMap = new HashMap<>();
         Set<Long> vylosovani = new HashSet<>();
+        List<Zapas> zapasy = new ArrayList<>();
 
         for (Long hrac : hraciList) {
             // na zacatku ma vsechny soupere
@@ -57,28 +59,39 @@ public class GenerateService {
                 // odeber hrace kteri jsou uz toto kolo vylosovani
                 souperi.removeAll(vylosovani);
 
-                // vylosuj soupere
-                int size = souperi.size();
-                int indexSoupere = random.nextInt(size);
-                Long souper = entry.getValue().toArray(new Long[size])[indexSoupere];
+                if (!souperi.isEmpty()) {
+                    // vylosuj soupere
+                    int size = souperi.size();
+                    int indexSoupere = random.nextInt(size);
+                    Long souper = entry.getValue().toArray(new Long[size])[indexSoupere];
 
-                // zapis dvojici do zapasu
-                vylosovani.addAll(asList(hrac, souper));
+                    // zapis dvojici do zapasu
+                    vylosovani.addAll(asList(hrac, souper));
 
-                // perzistuj zapasy
-                Zapas zapas = new Zapas();
-                zapas.setId(idZapasu++);
-                zapas.setKolo(kolo);
-                zapas.setHrac1(hrac);
-                zapas.setHrac2(souper);
-                zapasDao.insert(zapas);
+                    // perzistuj zapasy
+                    Zapas zapas = new Zapas();
+                    zapas.setId(idZapasu++);
+                    zapas.setKolo(kolo.getId());
+                    zapas.setHrac1(hrac);
+                    zapas.setHrac2(souper);
+                    zapasy.add(zapas);
+                } else {
+                    // nepodarilo se pro hrace najit zadneho soupere,
+                    // protoze vsichni hraci, se kterymi jeste nehral, uz maji vylosovane soupere
+                    // TODO: vymyslet chytrejsi algoritmus losovani -> mapa musi byt setridena sestupne podle poctu moznych souperu
+                    throw new IllegalStateException("Nepodařilo se najít soupeře pro hráče s ID " + hrac
+                            + "\nKolo nebylo vygenerováno.");
+                }
             }
         }
 
+        koloDao.insert(kolo);
+        for (Zapas zapas : zapasy)
+            zapasDao.insert(zapas);
         connection.commit();
     }
 
-    private long createKolo(LocalDate zacatek, LocalDate konec) throws SQLException {
+    private Kolo createKolo(LocalDate zacatek, LocalDate konec) throws SQLException {
         List<Kolo> kola = koloDao.list();
         long posledniKolo = 0;
         if (!kola.isEmpty())
@@ -88,8 +101,7 @@ public class GenerateService {
         kolo.setId(posledniKolo + 1);
         kolo.setStart(zacatek);
         kolo.setKonec(konec);
-        koloDao.insert(kolo);
-        return kolo.getId();
+        return kolo;
     }
 
     private long getMaxIdZapasu() throws SQLException {
