@@ -51,7 +51,10 @@ public class GenerateService {
             hraciMap.put(hrac, ostatni);
         }
 
-        for (Map.Entry<Long, Set<Long>> entry : hraciMap.entrySet()) {
+        SortedSet<Map.Entry<Long, Set<Long>>> sestupneTrideniHraci = new TreeSet<>(new DescendingSizeComparator());
+        sestupneTrideniHraci.addAll(hraciMap.entrySet());
+
+        for (Map.Entry<Long, Set<Long>> entry : sestupneTrideniHraci) {
             Long hrac = entry.getKey();
             if (!vylosovani.contains(hrac)) {
                 // hrac jeste nema urceneho soupere
@@ -65,6 +68,7 @@ public class GenerateService {
                     int indexSoupere = random.nextInt(size);
                     Long souper = entry.getValue().toArray(new Long[size])[indexSoupere];
 
+                    // TODO: pridej kontrolu, jestli vylosovany souper nebyl pro jineho hrace jedina moznost s kym mohl hrat a pripadne losovat jineho soupere
                     // zapis dvojici do zapasu
                     vylosovani.addAll(asList(hrac, souper));
 
@@ -78,7 +82,6 @@ public class GenerateService {
                 } else {
                     // nepodarilo se pro hrace najit zadneho soupere,
                     // protoze vsichni hraci, se kterymi jeste nehral, uz maji vylosovane soupere
-                    // TODO: vymyslet chytrejsi algoritmus losovani -> mapa musi byt setridena sestupne podle poctu moznych souperu
                     throw new IllegalStateException("Nepodařilo se najít soupeře pro hráče s ID " + hrac
                             + "\nKolo nebylo vygenerováno.");
                 }
@@ -106,5 +109,17 @@ public class GenerateService {
 
     private long getMaxIdZapasu() throws SQLException {
         return zapasDao.getMaxId();
+    }
+
+    private class DescendingSizeComparator implements Comparator<Map.Entry<Long, Set<Long>>> {
+        @Override
+        public int compare(Map.Entry<Long, Set<Long>> firstPLayer, Map.Entry<Long, Set<Long>> secondPlayer) {
+            if (firstPLayer.getValue().size() == secondPlayer.getValue().size())
+                // stejna velikost -> tridime podle IDcka vzestupne
+                return firstPLayer.getKey().compareTo(secondPlayer.getKey());
+            else
+                // ruzna velikost -> tridime podle velikosti sestupne
+                return Integer.compare(secondPlayer.getValue().size(), firstPLayer.getValue().size());
+        }
     }
 }
