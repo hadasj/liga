@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERZE=1.2-SNAPSHOT
+VERZE=1.3-SNAPSHOT
 
 cd $HOME/workspace/liga
 

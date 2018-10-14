@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERZE=1.2-SNAPSHOT
+VERZE=1.3-SNAPSHOT
 DB=$HOME/Documents/pp-test
 JAVA11=$JAVA11_HOME/bin/java
 
