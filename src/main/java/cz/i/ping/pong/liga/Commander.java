@@ -13,6 +13,7 @@ public class Commander {
     private static final String DEFAULT_DERBY_DB = "/home/honza/Documents/pp-liga";
     private static final String DEFAULT_DERBY_USER = "hadasj";
     private static final String DEFAULT_DERBY_PASSWORD = "liga123";
+    private static final String DEFAULT_PATH = "/home/honza/Documents/Data";
     public static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("d.M.yyyy");
 
     public static void main(String[] args) {
@@ -53,19 +54,25 @@ public class Commander {
     private String db;
     private String user;
     private String password;
+    private String path;
 
     private Commander(String[] arguments) {
         db = DEFAULT_DERBY_DB;
+        path = DEFAULT_PATH;
         user = DEFAULT_DERBY_USER;
         password = DEFAULT_DERBY_PASSWORD;
 
         if (arguments.length >= 1) {
             db = arguments[0];
         }
-        if (arguments.length >= 3) {
-            user = arguments[1];
-            password = arguments[2];
+        if (arguments.length >= 2)
+            path = arguments[1];
+
+        if (arguments.length >= 4) {
+            user = arguments[2];
+            password = arguments[3];
         }
+
         File derbyDbDirectory = new File(db);
         // check db path
         if (!derbyDbDirectory.exists() || !derbyDbDirectory.isDirectory() || !derbyDbDirectory.canWrite())
@@ -192,7 +199,7 @@ public class Commander {
 
     private void export(String line, PrintStream out) {
         try {
-            ExportService exportService = new ExportService(db, user, password);
+            ExportService exportService = new ExportService(db, user, password, path);
 
             String parts[] = line.split(" ");
             long kolo;

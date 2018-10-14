@@ -18,16 +18,18 @@ public class ExportService {
 
     private ZapasDao zapasDao;
     private KoloDao koloDao;
+    private final String PATH;
 
-    public ExportService(String db, String user, String password) throws SQLException {
+    public ExportService(String db, String user, String password, String path) throws SQLException {
         Connection connection = DriverManager.getConnection("jdbc:derby:" + db, user, password);
         zapasDao = new ZapasDao(connection);
         koloDao = new KoloDao(connection);
+        PATH = path;
     }
 
     public void exportKolo(long kolo) throws SQLException, IOException {
         List<Zapas> zapasy = zapasDao.list(kolo);
-        File file = new File(FILE_NAME + kolo + EXTENSION);
+        File file = new File(PATH + File.separator + FILE_NAME + kolo + EXTENSION);
         if (file.exists())
             throw new IllegalStateException("soubor " + file.getAbsolutePath() + " existuje!");
 
