@@ -152,6 +152,10 @@ public class Commander {
         }
         Import command = Import.codeOf(parts[0]);
         String filename = parts[1];
+        if (!filename.contains(File.separator)) {
+            // relative path - add path to workdir
+            filename = path + File.separator + filename;
+        }
         File file = new File(filename);
         if (!file.exists() || !file.canRead()) {
             out.println("Soubor " + filename + " nejde otevřít");
@@ -209,7 +213,7 @@ public class Commander {
                 kolo = exportService.getLastKolo();
 
             out.println("Exportuji kolo: " + kolo);
-            exportService.exportKolo(kolo);
+            exportService.exportKolo(kolo, out);
             out.println("Export proběhl úspěšně");
         } catch (Exception e) {
             out.println("Chyba exportu " + e.getClass().getName() + ": " + e.getMessage());

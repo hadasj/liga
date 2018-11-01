@@ -27,20 +27,22 @@ public class ExportService {
         PATH = path;
     }
 
-    public void exportKolo(long kolo) throws SQLException, IOException {
+    public void exportKolo(long kolo, PrintStream console) throws SQLException, IOException {
         List<Zapas> zapasy = zapasDao.list(kolo);
         File file = new File(PATH + File.separator + FILE_NAME + kolo + EXTENSION);
         if (file.exists())
             throw new IllegalStateException("soubor " + file.getAbsolutePath() + " existuje!");
 
-        PrintWriter out = new PrintWriter(new FileWriter(file));
+        PrintWriter exportFile = new PrintWriter(new FileWriter(file));
         for (Zapas zapas : zapasy) {
-            out.println(zapas.getId() + DELIMITER + zapas.getKolo() + DELIMITER +
+            exportFile.println(zapas.getId() + DELIMITER + zapas.getKolo() + DELIMITER +
                     zapas.getHrac1Jmeno() + DELIMITER + zapas.getHrac2Jmeno() + DELIMITER +
+                    // TODO: odebrat body
                     trim(zapas.getScore()) + DELIMITER + trim(zapas.getBodyHrac1()) + DELIMITER +
                     trim(zapas.getBodyHrac2()) + DELIMITER + trim(zapas.getTime()));
         }
-        out.close();
+        exportFile.close();
+        console.println("Data zapsany do souboru: " + file.getAbsolutePath());
     }
 
     public long getLastKolo() throws SQLException {
