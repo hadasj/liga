@@ -84,32 +84,29 @@ public class ImportService {
         Zapas zapas = new Zapas();
         zapas.setId(Long.parseLong(line[0]));
         zapas.setScore(line[4]);
-        // TODO: odebrat body z CSV
-        int bodyHrac1 = Integer.parseInt(line[5]);
-        int bodyHrac2 = Integer.parseInt(line[6]);
-        if (bodyHrac1 <= 0 || bodyHrac2 <= 0) {
-            // nejsou vyplnene body
-            if (zapas.getScore() != null && zapas.getScore().length() > 1) {
-                // ale je vyplnene score zapasu -> urci body podle score
-                String sety[] = zapas.getScore().split(":");
-                if (sety.length < 2)
-                    throw new IllegalStateException("Chybné score: " + zapas.getScore() + ". Nelze určit vítěze zápasu.");
-                int setyHrac1 = Integer.parseInt(sety[0]);
-                int setyHrac2 = Integer.parseInt(sety[1]);
-                if (setyHrac1 > setyHrac2) {
-                    bodyHrac1 = 3;
-                    bodyHrac2 = 1;
-                } else if (setyHrac2 > setyHrac1) {
-                    bodyHrac2 = 3;
-                    bodyHrac1 = 1;
-                } else
-                    throw new IllegalStateException("");
-            }
+
+        int bodyHrac1 = 0, bodyHrac2 = 0;
+        if (zapas.getScore() != null && zapas.getScore().length() > 1) {
+            // je vyplnene score zapasu -> urci body podle score
+            String sety[] = zapas.getScore().split(":");
+            if (sety.length < 2)
+                throw new IllegalStateException("Chybné score: " + zapas.getScore() + ". Nelze určit vítěze zápasu.");
+            int setyHrac1 = Integer.parseInt(sety[0]);
+            int setyHrac2 = Integer.parseInt(sety[1]);
+            if (setyHrac1 > setyHrac2) {
+                bodyHrac1 = 3;
+                bodyHrac2 = 1;
+            } else if (setyHrac2 > setyHrac1) {
+                bodyHrac2 = 3;
+                bodyHrac1 = 1;
+            } else
+                throw new IllegalStateException("");
         }
         zapas.setBodyHrac1(bodyHrac1);
         zapas.setBodyHrac2(bodyHrac2);
-        if (line.length > 7)
-            zapas.setTime(LocalDateTime.parse(line[7], TIMESTAMP_FORMAT));
+
+        if (line.length >= 6)
+            zapas.setTime(LocalDateTime.parse(line[5], TIMESTAMP_FORMAT));
 
         zapasDao.update(zapas);
     }

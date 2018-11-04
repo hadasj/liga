@@ -37,9 +37,7 @@ public class ExportService {
         for (Zapas zapas : zapasy) {
             exportFile.println(zapas.getId() + DELIMITER + zapas.getKolo() + DELIMITER +
                     zapas.getHrac1Jmeno() + DELIMITER + zapas.getHrac2Jmeno() + DELIMITER +
-                    // TODO: odebrat body
-                    trim(zapas.getScore()) + DELIMITER + trim(zapas.getBodyHrac1()) + DELIMITER +
-                    trim(zapas.getBodyHrac2()) + DELIMITER + trim(zapas.getTime()));
+                    trim(zapas.getScore()) + DELIMITER + trim(zapas.getTime()));
         }
         exportFile.close();
         console.println("Data zapsany do souboru: " + file.getAbsolutePath());
