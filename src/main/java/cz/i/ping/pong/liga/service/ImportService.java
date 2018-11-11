@@ -83,7 +83,8 @@ public class ImportService {
     private void importLine(String[] line) throws SQLException {
         Zapas zapas = new Zapas();
         zapas.setId(Long.parseLong(line[0]));
-        zapas.setScore(line[4]);
+        if (line.length >= 5)
+            zapas.setScore(line[4]);
 
         int bodyHrac1 = 0, bodyHrac2 = 0;
         if (zapas.getScore() != null && zapas.getScore().length() > 1) {
