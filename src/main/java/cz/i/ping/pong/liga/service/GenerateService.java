@@ -7,7 +7,6 @@ import cz.i.ping.pong.liga.entity.Hrac;
 import cz.i.ping.pong.liga.entity.Kolo;
 import cz.i.ping.pong.liga.entity.Zapas;
 
-import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -18,6 +17,8 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.asList;
 
 public class GenerateService {
+    private static final int MAX_POCET_OPAKOVANI = 5;
+
     private Connection connection;
     private HracDao hracDao;
     private KoloDao koloDao;
@@ -64,11 +65,16 @@ public class GenerateService {
 
                 if (!souperi.isEmpty()) {
                     // vylosuj soupere
-                    int size = souperi.size();
-                    int indexSoupere = random.nextInt(size);
-                    Long souper = entry.getValue().toArray(new Long[size])[indexSoupere];
+                    Long souper = drawAdversary(souperi);
+                    // kontrola, jestli jsme jinemu jeste nevylosovanemu hraci nesebrali posledniho mozneho soupere
+                    boolean pokracovat = checkRemainingPlayers(hrac, souper, vylosovani, hraciMap);
 
-                    // TODO: pridej kontrolu, jestli vylosovany souper nebyl pro jineho hrace jedina moznost s kym mohl hrat a pripadne losovat jineho soupere
+                    for (int zopakovano = 0; !pokracovat; zopakovano++) {
+                        souper = drawAdversary(souperi);
+                        pokracovat = checkRemainingPlayers(hrac, souper, vylosovani, hraciMap);
+                        if (zopakovano > MAX_POCET_OPAKOVANI)
+                            fail(hrac, zapasy);
+                    }
                     // zapis dvojici do zapasu
                     vylosovani.addAll(asList(hrac, souper));
 
@@ -82,8 +88,7 @@ public class GenerateService {
                 } else {
                     // nepodarilo se pro hrace najit zadneho soupere,
                     // protoze vsichni hraci, se kterymi jeste nehral, uz maji vylosovane soupere
-                    throw new IllegalStateException("Nepodařilo se najít soupeře pro hráče s ID " + hrac
-                            + "\nKolo nebylo vygenerováno.");
+                    fail(hrac, zapasy);
                 }
             }
         }
@@ -92,6 +97,22 @@ public class GenerateService {
         for (Zapas zapas : zapasy)
             zapasDao.insert(zapas);
         connection.commit();
+    }
+
+    private void fail(final Long hrac, List<Zapas> zapasy) throws IllegalStateException {
+        StringBuilder message = new StringBuilder("Vylosovane dvojice: ");
+        for (Zapas zapas : zapasy) {
+            message.append(zapas.getHrac1()).append(":").append(zapas.getHrac2()).append(", ");
+        }
+        message.append("\nNepodařilo se najít soupeře pro hráče s ID ").append(hrac).append(".")
+                .append("\nKolo nebylo vygenerováno.");
+        throw new IllegalStateException(message.toString());
+    }
+
+    private Long drawAdversary(Set<Long> souperi) {
+        int size = souperi.size();
+        int indexSoupere = random.nextInt(size);
+        return souperi.toArray(new Long[size])[indexSoupere];
     }
 
     private Kolo createKolo(LocalDate zacatek, LocalDate konec) throws SQLException {
@@ -105,6 +126,30 @@ public class GenerateService {
         kolo.setStart(zacatek);
         kolo.setKonec(konec);
         return kolo;
+    }
+
+    private boolean checkRemainingPlayers(final long hrac, final long souper, final Set<Long> vylosovani,
+                                          final Map<Long, Set<Long>> hraciMap) {
+        for (Map.Entry<Long, Set<Long>> entry : hraciMap.entrySet()) {
+            final Long kontrolovanyHrac = entry.getKey();
+            // preskoc kontrolu vylosovane dvojice - ta uz je vylosovana -> je OK
+            if (kontrolovanyHrac.equals(hrac) || kontrolovanyHrac.equals(souper))
+                continue;
+            // hrac uz je vylosovany - nemusis ho kontrolovat
+            if (vylosovani.contains(kontrolovanyHrac))
+                continue;
+            Set<Long> potencialniSouperi = entry.getValue();
+            // odeber jiz vylosovane hrace
+            potencialniSouperi.removeAll(vylosovani);
+            // a aktualni vylosovanou dvojici
+            potencialniSouperi.remove(hrac);
+            potencialniSouperi.remove(souper);
+            // a zkontroluj, ze hraci jeste zustal nejaky souper
+            if (potencialniSouperi.isEmpty())
+                // pokud ne, tak neni mozne pokracovat
+                return false;
+        }
+        return true;
     }
 
     private long getMaxIdZapasu() throws SQLException {

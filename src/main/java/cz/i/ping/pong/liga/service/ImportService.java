@@ -87,7 +87,7 @@ public class ImportService {
             zapas.setScore(line[4]);
 
         int bodyHrac1 = 0, bodyHrac2 = 0;
-        if (zapas.getScore() != null && zapas.getScore().length() > 1) {
+        if (zapas.getScore() != null && zapas.getScore().trim().length() > 1) {
             // je vyplnene score zapasu -> urci body podle score
             String sety[] = zapas.getScore().split(":");
             if (sety.length < 2)

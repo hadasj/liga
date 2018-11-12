@@ -168,7 +168,7 @@ public class Commander {
             importService.importFile(command, file);
             out.println("Import souboru " + filename + " proběhl úspěšně.");
         } catch (Exception e) {
-            out.println("Chyba importu " + e.getClass().getName() + ": " + e.getMessage());
+            out.println("Chyba importu.");
             e.printStackTrace(out);
         }
     }
@@ -196,7 +196,7 @@ public class Commander {
             generateService.generate(zacatek, konec);
             out.println("Generování soupeřů pro kolo " + zacatek + " - " + konec + " proběhl úspěšně.");
         }catch (Exception e) {
-            out.println("Chyba generovani " + e.getClass().getName() + ": " + e.getMessage());
+            out.println("Chyba generování.");
             e.printStackTrace(out);
         }
     }
@@ -216,7 +216,7 @@ public class Commander {
             exportService.exportKolo(kolo, out);
             out.println("Export proběhl úspěšně");
         } catch (Exception e) {
-            out.println("Chyba exportu " + e.getClass().getName() + ": " + e.getMessage());
+            out.println("Chyba exportu.");
             e.printStackTrace(out);
         }
     }
