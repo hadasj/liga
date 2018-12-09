@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.Set;
 
 public class ImportService {
-    private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("d.M.yy HH:mm");
+    private static final DateTimeFormatter TIMESTAMP_FORMAT_SHORT = DateTimeFormatter.ofPattern("d.M.yy HH:mm");
+    private static final DateTimeFormatter TIMESTAMP_FORMAT_LONG = DateTimeFormatter.ofPattern("d.M.yyyy HH:mm");
 
     private Connection connection;
     private HracDao hracDao;
@@ -107,8 +108,15 @@ public class ImportService {
         zapas.setBodyHrac2(bodyHrac2);
 
         if (line.length >= 6)
-            zapas.setTime(LocalDateTime.parse(line[5], TIMESTAMP_FORMAT));
+            if (isYearShort(line[5]))
+                zapas.setTime(LocalDateTime.parse(line[5], TIMESTAMP_FORMAT_SHORT));
+            else
+                zapas.setTime(LocalDateTime.parse(line[5], TIMESTAMP_FORMAT_LONG));
 
         zapasDao.update(zapas);
+    }
+
+    private boolean isYearShort(String date) {
+        return date.split("\\.")[2].length() < 4;
     }
 }
